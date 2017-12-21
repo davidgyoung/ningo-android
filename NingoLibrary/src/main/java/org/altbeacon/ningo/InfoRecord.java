@@ -1,4 +1,4 @@
-package com.altbeacon.ningo;
+package org.altbeacon.ningo;
 
 import android.icu.text.IDNA;
 

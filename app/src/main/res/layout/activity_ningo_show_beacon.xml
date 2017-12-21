@@ -40,6 +40,7 @@ tools:context=".NingoShowBeaconActivity">
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
     <Button
+        android:id="@+id/save_button"
         android:text="Save Changes"
         android:onClick="saveChanges"
         android:layout_weight="1"

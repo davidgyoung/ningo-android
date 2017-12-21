@@ -1,4 +1,4 @@
-package com.altbeacon.ningo;
+package org.altbeacon.ningo;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -86,25 +86,24 @@ public class Beacon {
 
     private void parseJson(JSONObject json) throws JSONException {
         if (json.has("beacon")) {
-            JSONObject beacon = json.getJSONObject("beacon");
-            if (beacon.has("identifier")) {
-                mIdentifier = beacon.getString("identifier");
-            }
-            if (beacon.has("wikibeacon_datum") && !beacon.isNull("wikibeacon_datum")) {
-                JSONObject wikibeaconDatum = beacon.getJSONObject("wikibeacon_datum");
-                if (wikibeaconDatum.has("latitude") && !wikibeaconDatum.isNull("latitude")) {
+            json = json.getJSONObject("beacon");
+        }
+        if (json.has("identifier")) {
+            mIdentifier = json.getString("identifier");
+        }
+        if (json.has("wikibeacon_datum") && !json.isNull("wikibeacon_datum")) {
+            JSONObject wikibeaconDatum = json.getJSONObject("wikibeacon_datum");
+            if (wikibeaconDatum.has("latitude") && !wikibeaconDatum.isNull("latitude")) {
 
-                    mWikiBeaconLatitude = wikibeaconDatum.getDouble("latitude");
-                }
-                if (wikibeaconDatum.has("longitude") && !wikibeaconDatum.isNull("longitude")) {
-                    mWikiBeaconLongitude = wikibeaconDatum.getDouble("longitude");
-                }
+                mWikiBeaconLatitude = wikibeaconDatum.getDouble("latitude");
             }
-            if (beacon.has("metadata") && !beacon.isNull("metadata")) {
-                mMetadata = MetadataV1.fromJson(beacon.getJSONObject("metadata"));
+            if (wikibeaconDatum.has("longitude") && !wikibeaconDatum.isNull("longitude")) {
+                mWikiBeaconLongitude = wikibeaconDatum.getDouble("longitude");
             }
         }
-
+        if (json.has("metadata") && !json.isNull("metadata")) {
+            mMetadata = MetadataV1.fromJson(json.getJSONObject("metadata"));
+        }
     }
 
     private void parseJson(String json) throws JSONException {

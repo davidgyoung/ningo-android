@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.altbeacon.ningo.AuthenticationClient;
+import org.altbeacon.ningo.AuthenticationClient;
 
 
 /**
@@ -16,7 +16,7 @@ import com.altbeacon.ningo.AuthenticationClient;
 
 public class NingoLoginActivity extends Activity {
 
-    AuthenticationClient mAuthClient = new AuthenticationClient();
+    AuthenticationClient mAuthClient;
     String mBeaconIdentifier = null;
 
     @Override
@@ -38,6 +38,7 @@ public class NingoLoginActivity extends Activity {
         final String email = ((EditText)findViewById(R.id.email)).getText().toString();
         final String password = ((EditText)findViewById(R.id.password)).getText().toString();
         findViewById(R.id.progressView).setVisibility(View.VISIBLE);
+        mAuthClient = new AuthenticationClient();
         mAuthClient.authenticate(email, password, new AuthenticationClient.AuthenticationClientResponseHandler() {
             @Override
             public void onFail(Exception e) {
@@ -60,9 +61,10 @@ public class NingoLoginActivity extends Activity {
                 });
                 if (apiToken != null) {
                     Settings settings = new Settings(NingoLoginActivity.this);
-                    settings.saveSetting(Settings.NINGO_API_TOKEN, apiToken);
+                    settings.saveSetting(Settings.NINGO_READWRITE_API_TOKEN, apiToken);
                     settings.saveSetting(Settings.NINGO_EMAIL, email);
                     settings.saveSetting(Settings.NINGO_PASSWORD, password);
+                    settings.saveSetting(Settings.NINGO_LOGIN_TIME_MILLIS, ""+System.currentTimeMillis());
 
                     Intent intent = new Intent(NingoLoginActivity.this, NingoShowBeaconActivity.class);
                     intent.putExtra("ningo_beacon_identifier", mBeaconIdentifier);

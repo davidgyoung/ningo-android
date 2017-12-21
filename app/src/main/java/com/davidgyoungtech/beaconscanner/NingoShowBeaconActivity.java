@@ -5,30 +5,34 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.altbeacon.ningo.Beacon;
-import com.altbeacon.ningo.GetBeaconClient;
-import com.altbeacon.ningo.Location;
-import com.altbeacon.ningo.MetadataV1;
-import com.altbeacon.ningo.PostBeaconClient;
+import org.altbeacon.ningo.Beacon;
+import org.altbeacon.ningo.GetBeaconClient;
+import org.altbeacon.ningo.Location;
+import org.altbeacon.ningo.MetadataV1;
+import org.altbeacon.ningo.PostBeaconClient;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Created by dyoung on 11/30/17.
  */
 
 public class NingoShowBeaconActivity extends Activity {
+    private static final String TAG = NingoShowBeaconActivity.class.getSimpleName();
 
     Beacon mBeacon = new Beacon();
     String mBeaconIdentifier = null;
     boolean mJsonEdited = false;
     boolean mLocationEdited = false;
+    String authToken = null;
+    boolean mReadonly = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,13 +45,25 @@ public class NingoShowBeaconActivity extends Activity {
         ((EditText)findViewById(R.id.latitude)).addTextChangedListener(mLocationChangedWatcher);
         ((EditText)findViewById(R.id.longitude)).addTextChangedListener(mLocationChangedWatcher);
 
-        String authToken = settings.getSetting(Settings.NINGO_API_TOKEN,null);
-        getBeaconClient = new GetBeaconClient(authToken);
-        if (authToken == null) {
-            Intent intent = new Intent(this, NingoLoginActivity.class);
-            startActivity(intent);
-            return;
+        long ningoLoginTimeMillis = 0;
+        try {
+            Log.d(TAG, "login time was: "+settings.getSetting(Settings.NINGO_LOGIN_TIME_MILLIS, null)+" now is "+System.currentTimeMillis());
+            ningoLoginTimeMillis = Long.parseLong(settings.getSetting(Settings.NINGO_LOGIN_TIME_MILLIS,"0"));
         }
+        catch (NumberFormatException e) {}
+        if (System.currentTimeMillis() - ningoLoginTimeMillis > 23*60*60*1000 /* 23 hours */) {
+            mReadonly = true;
+            authToken = settings.getSetting(Settings.NINGO_READONLY_API_TOKEN, null);
+            ((EditText)findViewById(R.id.raw_json)).setEnabled(false);
+            ((EditText)findViewById(R.id.latitude)).setEnabled(false);
+            ((EditText)findViewById(R.id.longitude)).setEnabled(false);
+            ((Button)findViewById(R.id.save_button)).setText("Change Values");
+        }
+        else {
+            authToken = settings.getSetting(Settings.NINGO_READWRITE_API_TOKEN,null);
+        }
+
+        getBeaconClient = new GetBeaconClient(authToken);
         try {
             mBeaconIdentifier = this.getIntent().getStringExtra("ningo_beacon_identifier");
             mBeacon.setIdentifier(mBeaconIdentifier);
@@ -138,9 +154,13 @@ public class NingoShowBeaconActivity extends Activity {
     };
 
     public void saveChanges(View view) {
+        if (mReadonly) {
+            showLogin();
+            return;
+        }
         String jsonString = ((EditText)findViewById(R.id.raw_json)).getText().toString();
         Settings settings = new Settings(this);
-        String authToken = settings.getSetting(Settings.NINGO_API_TOKEN,null);
+        String authToken = settings.getSetting(Settings.NINGO_READWRITE_API_TOKEN,null);
         PostBeaconClient postBeaconClient = new PostBeaconClient(authToken);
         try {
             if (mJsonEdited) {
@@ -200,5 +220,13 @@ public class NingoShowBeaconActivity extends Activity {
 
 
 
+
+
+    }
+    private void showLogin() {
+        Intent intent = new Intent(this, NingoLoginActivity.class);
+        intent.putExtra("ningo_beacon_identifier", mBeaconIdentifier);
+        startActivity(intent);
+        return;
     }
 }

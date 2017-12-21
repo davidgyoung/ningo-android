@@ -1,4 +1,4 @@
-package com.altbeacon.ningo;
+package org.altbeacon.ningo;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,7 +29,7 @@ public class PostBeaconClient {
     // curl -X POST https://ningo-api.herokuapp.com/api/public/v1/beacons -d '{"beacon":{"identifier":"2F234454-CF6D-4A0F-ADF2-F4911BA9FFA6_1_2_ibeacon", "metadata": {"location":{"longitude":38.93,"latitude":-77.22}}}}' -H 'Content-Type: application/json' -H 'Authorization: Token token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE0OTcwMzMxNTJ9.qk0oNd1TWrpQ_1fp4tbO9h4ueIJ2IthHeEaeGLKAYfU"'
     private RestRequest mRestRequest = new RestRequest();
 
-    public void post(Beacon beacon, final com.altbeacon.ningo.PostBeaconClient.PostBeaconClientResponseHandler responseHandler) {
+    public void post(Beacon beacon, final org.altbeacon.ningo.PostBeaconClient.PostBeaconClientResponseHandler responseHandler) {
         Map<String, String> headers = mRestRequest.getHeadersForJsonRequestWithBody();
         headers.put("Authorization", "Token token=\"" + mAuthenticationToken + "\"");
 

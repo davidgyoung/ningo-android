@@ -41,6 +41,7 @@ public class BeaconTracker {
 
     public void start() {
         if (!mStarted) {
+            mBeaconManager.setDebug(true);
             mBeaconManager.startRangingBeaconsInRegion(new Region("allbeacons", null, null, null));
             IntentFilter filter = new IntentFilter(BeaconManagerV3.RANGING_NOTIFICATION_NAME);
             LocalBroadcastManager.getInstance(mContext).registerReceiver(mLocalReceiver, filter);

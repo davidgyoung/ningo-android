@@ -69,6 +69,7 @@ public class SingleBeaconActivity extends Activity {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG, "Received debug message");
+            NingoDataFetcher.getInstance(SingleBeaconActivity.this).fetchIfStale();
             updateView();
         }
     };
@@ -76,12 +77,43 @@ public class SingleBeaconActivity extends Activity {
     private void updateView() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(mChosenBeacon.getId1().toString());
-        sb.append("\n");
-        sb.append("major: "+mChosenBeacon.getId2().toString());
-        sb.append("\n");
-        sb.append("minor: "+mChosenBeacon.getId3().toString());
-        sb.append("\n");
+
+        String type = "Unknown";
+        if (mChosenBeacon.getParserIdentifier().equalsIgnoreCase("ibeacon")) {
+            type = "iBeacon";
+        }
+        else if (mChosenBeacon.getParserIdentifier().equalsIgnoreCase("altbeacon")) {
+            type = "altbeacon";
+        }
+        else if (mChosenBeacon.getParserIdentifier() != null) {
+            type = mChosenBeacon.getParserIdentifier().toUpperCase();
+        }
+
+        ((TextView)findViewById(R.id.beaconType)).setText(type);
+
+
+        ((TextView)findViewById(R.id.beaconFirstIdentifierValue)).setText(mChosenBeacon.getId1().toString());
+        //sb.append(mChosenBeacon.getId1().toString());
+        //sb.append("\n");
+        if (mChosenBeacon.getIdentifiers().size() > 1) {
+            ((TextView)findViewById(R.id.beaconSecondIdentifierValue)).setText(mChosenBeacon.getId2().toString());
+        }
+        else {
+            (findViewById(R.id.beaconSecondIdentifier)).setVisibility(View.GONE);
+        }
+        if (mChosenBeacon.getIdentifiers().size() > 2) {
+            ((TextView)findViewById(R.id.beaconThirdIdentifierValue)).setText(mChosenBeacon.getId3().toString());
+        }
+        else {
+            (findViewById(R.id.beaconThirdIdentifier)).setVisibility(View.GONE);
+        }
+        if (mChosenBeacon.getDataFields().size() > 0) {
+            ((TextView)findViewById(R.id.beaconFirstDataValue)).setText(mChosenBeacon.getDataFields().get(0).toString());
+        }
+        else {
+            (findViewById(R.id.beaconFirstData)).setVisibility(View.GONE);
+        }
+
         TrackedBeacon trackedBeacon = mBeaconTracker.getTrackedBeacon(mChosenBeacon);
         if (trackedBeacon != null) {
             mTrackedBeacon = trackedBeacon;
@@ -103,6 +135,17 @@ public class SingleBeaconActivity extends Activity {
             sb.append("\n");
             sb.append("running average rssi: "+rssiStr);
             sb.append("\n");
+            org.altbeacon.ningo.Beacon ningoBeacon = NingoDataFetcher.getInstance(this)
+                    .getNingoBeaconForBeacon(trackedBeacon.getBeacon());
+            if (ningoBeacon != null && ningoBeacon.getMetadata() != null && ningoBeacon.getMetadata().getLocation() != null) {
+                sb.append(String.format("Ningo latitude: %1.2f\n",ningoBeacon.getMetadata().getLocation().getLatitude()));
+                sb.append(String.format("Ningo longitude: %1.2f\n",ningoBeacon.getMetadata().getLocation().getLongitude()));
+            }
+            else if (ningoBeacon != null && ningoBeacon.getWikiBeaconLatitude() != null) {
+                sb.append(String.format("Wikibeacon latitude: %1.2f\n",ningoBeacon.getWikiBeaconLatitude()));
+                sb.append(String.format("Wikibeacon longitude: %1.2f\n",ningoBeacon.getWikiBeaconLongitude()));
+            }
+
             if (mTrackedBeacon.isMeasurementsStabilized() || trackedBeacon == null) {
                 if (mCalibrating) {
                     mCalibrating = false;

@@ -12,6 +12,69 @@
     android:orientation="vertical"
     tools:context=".SingleBeaconActivity">
     <TextView
+        android:id="@+id/beaconType"
+        android:textSize="20dp"
+        android:text="Unknown beacon type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/beaconFirstIdentifierValue"
+        android:text="xxx"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <LinearLayout
+        android:id="@+id/beaconSecondIdentifier"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+    <TextView
+        android:id="@+id/beaconSecondIdentifierName"
+        android:textStyle="bold"
+        android:text="id2:"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/beaconSecondIdentifierValue"
+        android:text="xxx"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/beaconThirdIdentifier"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/beaconThirdIdentifierName"
+            android:textStyle="bold"
+            android:text="id3:"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/beaconThirdIdentifierValue"
+            android:text="xxx"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/beaconFirstData"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/beaconFirstDataName"
+            android:textStyle="bold"
+            android:text="Data Field:"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/beaconFirstDataValue"
+            android:text="xxx"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <TextView
         android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

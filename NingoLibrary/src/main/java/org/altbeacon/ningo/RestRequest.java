@@ -1,4 +1,4 @@
-package com.altbeacon.ningo;
+package org.altbeacon.ningo;
 
 /**
  * Created by dyoung on 11/21/17.

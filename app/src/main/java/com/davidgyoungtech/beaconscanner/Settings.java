@@ -11,7 +11,9 @@ import android.preference.PreferenceManager;
 public class Settings {
     public static final String NINGO_EMAIL = "NINGO_EMAIL";
     public static final String NINGO_PASSWORD = "NINGO_PASSWORD";
-    public static final String NINGO_API_TOKEN = "NINGO_API_TOKEN";
+    public static final String NINGO_READWRITE_API_TOKEN = "NINGO_READWRITE_API_TOKEN";
+    public static final String NINGO_READONLY_API_TOKEN = "NINGO_READONLY_API_TOKEN";
+    public static final String NINGO_LOGIN_TIME_MILLIS = "NINGO_LOGIN_TIME_MILLIS";
 
     private Context mContext;
 

@@ -11,13 +11,11 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.BeaconManagerV3;
-import org.altbeacon.beacon.Region;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -38,7 +36,7 @@ public class BeaconListActivity extends Activity implements AdapterView.OnItemCl
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_debug);
+        setContentView(R.layout.activity_beacon_list);
         BeaconManagerV3.getInstance(this).setDebug(true);
 
         mListView = findViewById(R.id.list);
@@ -47,6 +45,7 @@ public class BeaconListActivity extends Activity implements AdapterView.OnItemCl
         mPermissionHelper.requestPermissions();
         mBeaconTracker = BeaconTracker.getInstance(this);
         mListView.setOnItemClickListener(this);
+        mTextView.setText("Looking for beacons...");
     }
     @Override
     protected void onResume() {
@@ -54,7 +53,6 @@ public class BeaconListActivity extends Activity implements AdapterView.OnItemCl
         mBeaconTracker.start();
         IntentFilter filter = new IntentFilter(BeaconTracker.UPDATE_NOTIFICATION_NAME);
         LocalBroadcastManager.getInstance(this).registerReceiver(mLocalReceiver, filter);
-        mTextView.setText("Detected beacons:");
         mLaunchedDetailActivity = false;
     }
     @Override
@@ -74,6 +72,7 @@ public class BeaconListActivity extends Activity implements AdapterView.OnItemCl
             Collections.sort(sortableList, mBeaconComparator);
             updateListView(sortableList);
             Log.d(TAG, "detected beacon count "+sortableList.size());
+            NingoDataFetcher.getInstance(BeaconListActivity.this).fetchIfStale();
         }
     };
 
@@ -96,13 +95,13 @@ public class BeaconListActivity extends Activity implements AdapterView.OnItemCl
         int top = (v == null) ? 0 : v.getTop();
 
         if (list.size() == 0) {
-            mTextView.setText("No beacons have been detected.  Parser count:  "+ BeaconManager.getInstanceForApplication(this).getBeaconParsers().size());
+            mTextView.setText("No beacons detected.");
         }
         else {
-            mTextView.setText("Detected beacons ("+list.size()+"):");
+            mTextView.setText(""+list.size()+" beacons detected:");
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                R.layout.custom_list_item, R.id.custom_list_item_text_view, getStringArray(list));
+        BeaconArrayAdapter adapter = new BeaconArrayAdapter(this,
+                R.layout.beacon_row, list);
 
         mSortedBeacons = list;
 
@@ -111,20 +110,6 @@ public class BeaconListActivity extends Activity implements AdapterView.OnItemCl
         mListView.setSelectionFromTop(index, top);
     }
 
-    private String[] getStringArray(ArrayList<TrackedBeacon> list) {
-        String[] array = new String[list.size()];
-
-        int i = 0;
-        for (TrackedBeacon db : list) {
-            String key = db.toString();
-            String rssiStr = String.format("%.1f",db.getBeacon().getRunningAverageRssi());
-            String distanceStr = String.format("%.1f",db.getBeacon().getDistance());
-            String pps = String.format("%.1f",db.getPacketsPerSec());
-            array[i] = ""+db.getBeacon().getId1()+" Major: "+db.getBeacon().getId2()+"Minor: "+db.getBeacon().getId3()+" Distance: "+distanceStr+" RSSI: "+rssiStr+" Packets: "+db.getTotalPacketsDetected()+" Adv/sec: "+pps;
-            i+= 1;
-        }
-        return array;
-    }
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String permissions[], @NonNull int[] grantResults) {

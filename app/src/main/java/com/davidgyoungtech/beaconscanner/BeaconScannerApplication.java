@@ -3,20 +3,28 @@ package com.davidgyoungtech.beaconscanner;
 import android.app.Application;
 import android.content.Context;
 import android.location.LocationManager;
+import android.os.Build;
 import android.util.Log;
 
 import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.BeaconManagerV3;
 import org.altbeacon.beacon.BeaconParser;
+import org.altbeacon.bluetooth.BluetoothMedic;
+import org.altbeacon.beacon.BeaconTransmitter;
 
 public class BeaconScannerApplication extends Application {
     private static final String TAG = BeaconScannerApplication.class.getSimpleName();
     private StringBuilder mLog = new StringBuilder();
     private NingoDataFetcher mNingoDataFetcher;
-
     @Override
     public void onCreate() {
         super.onCreate();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            BluetoothMedic medic = BluetoothMedic.getInstance();
+            medic.enablePowerCycleOnFailures(this);
+        }
+
         BeaconManagerV3.getInstance(this).addBeaconParser(new BeaconParser("ibeacon").setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
         BeaconManagerV3.getInstance(this).addBeaconParser(new BeaconParser("eddystone-uid").setBeaconLayout(BeaconParser.EDDYSTONE_UID_LAYOUT));
         BeaconManagerV3.getInstance(this).addBeaconParser(new BeaconParser("eddystone-eid").setBeaconLayout("s:0-1=feaa,m:2-2=30,p:3-3:-41,i:4-11"));
@@ -33,4 +41,6 @@ public class BeaconScannerApplication extends Application {
 
         Log.i(TAG, "Beacon scanner starting up.");
     }
+
+
 }

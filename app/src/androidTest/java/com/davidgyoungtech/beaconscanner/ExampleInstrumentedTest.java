@@ -1,4 +1,4 @@
-package com.allmyspots.beaconmodulereference;
+package com.davidgyoungtech.beaconscanner;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

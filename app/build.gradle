@@ -29,6 +29,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     //compile 'com.github.davidgyoung:android-beacon-library:new-api-SNAPSHOT'
+    //compile 'org.altbeacon:android-beacon-library:2.12.4-1-g3d23368@aar'
     compile project(":android-beacon-library")
     compile 'com.android.support:appcompat-v7:26.0.0-beta2'
     compile project(":NingoLibrary")

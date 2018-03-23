@@ -7,33 +7,44 @@
     <application
         android:name=".BeaconScannerApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ningo"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <activity android:name=".TransmitterListActivity" android:screenOrientation="portrait">
+        </activity>
+
+        <activity android:name=".EditTransmitterActivity" android:screenOrientation="portrait">
+        </activity>
+
         <activity android:name=".BeaconListActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
+            </intent-filter>x
         </activity>
         <activity android:name=".SingleBeaconActivity" android:screenOrientation="portrait"/>
         <activity android:name=".NingoLoginActivity" android:screenOrientation="portrait"/>
         <activity android:name=".NingoShowBeaconActivity" android:screenOrientation="portrait"/>
-        <!-- The statement below is only needed if running the AndroidBeaconLibrary in a separate
-             process, typically not needed. -->
-        <!--
+
         <service android:enabled="true"
-                 android:exported="false"
-                 android:process=":BeaconService"
-                 android:isolatedProcess="false"
-                 android:label="beacon"
-                 android:name="org.altbeacon.beacon.service.BeaconService"
-                 tools:node="replace"
-            />
-            -->
+            android:exported="false"
+            android:label="beacon"
+            android:name="org.altbeacon.beacon.service.BeaconService"
+            tools:node="replace"
+            >
+            <!-- IMPORTANT: All resource paths must be fully qualified -->
+            <meta-data android:name="longScanForcingEnabled" android:value="true"/>
+            <meta-data android:name="foregroundServiceLaunchActivityName" android:value="com.davidgyoungtech.beaconscanner.BeaconListActivity"/>
+            <meta-data android:name="foregroundServiceNotificationId" android:value="365739466"/>
+            <meta-data android:name="foregroundServiceNotificationIconResourceName" android:value="com.davidgyoungtech.beaconscanner:mipmap/ningo"/>
+            <meta-data android:name="foregroundServiceNotificationContentTitle" android:value="Beacon Scanner"/>
+            <meta-data android:name="foregroundServiceNotificationContentText" android:value="Scanning for beacons"/>
+            <meta-data android:name="foregroundServiceNotificationTicker" android:value="Beacon Scanner app is scanning for beacons"/>
+        </service>
+
+        <receiver android:name=".BluetoothStateBroadcastReceiver" />
     </application>
 
 </manifest>

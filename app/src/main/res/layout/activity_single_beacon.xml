@@ -3,6 +3,7 @@
     android:id="@+id/activity_debug"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
@@ -11,10 +12,37 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
     tools:context=".SingleBeaconActivity">
+
+    <LinearLayout
+        android:paddingLeft="8dp"
+        android:paddingRight="0dp"
+        android:paddingTop="0dp"
+        android:paddingBottom="10dp"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="35dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:scaleType="fitCenter"
+            app:srcCompat="@mipmap/altbeacon" />
+        <TextView
+            android:id="@+id/beaconType"
+            android:textSize="20dp"
+            android:text="Unknown beacon type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+
     <TextView
-        android:id="@+id/beaconType"
-        android:textSize="20dp"
-        android:text="Unknown beacon type"
+        android:textSize="15dp"
+        android:background="#aaccee"
+        android:text="Transmitted Beacon fields"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <TextView
@@ -31,7 +59,7 @@
         android:id="@+id/beaconSecondIdentifierName"
         android:textStyle="bold"
         android:text="id2:"
-        android:layout_width="100dp"
+        android:layout_width="50dp"
         android:layout_height="wrap_content"/>
     <TextView
         android:id="@+id/beaconSecondIdentifierValue"
@@ -44,12 +72,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <TextView
             android:id="@+id/beaconThirdIdentifierName"
-            android:textStyle="bold"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
             android:text="id3:"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"/>
+            android:textStyle="bold" />
         <TextView
             android:id="@+id/beaconThirdIdentifierValue"
             android:text="xxx"
@@ -64,8 +93,8 @@
         <TextView
             android:id="@+id/beaconFirstDataName"
             android:textStyle="bold"
-            android:text="Data Field:"
-            android:layout_width="100dp"
+            android:text="data1:"
+            android:layout_width="50dp"
             android:layout_height="wrap_content"/>
         <TextView
             android:id="@+id/beaconFirstDataValue"
@@ -73,20 +102,81 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/beaconMeasuredPower"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
+        android:orientation="horizontal">
+        <TextView
+            android:textStyle="bold"
+            android:text="power:"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/measuredPoweValue"
+            android:text="-20 dBm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <TextView
+        android:id="@+id/receptionStatsHeader"
+        android:textSize="15dp"
+        android:background="#aaccee"
+        android:text="Reception Statistics"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
     <TextView
-        android:id="@+id/text"
+        android:id="@+id/receptionStats"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"/>
+    <TextView
+        android:id="@+id/eddystoneTelemetryHeader"
+        android:textSize="15dp"
+        android:background="#aaccee"
+        android:text="Eddystone-TLM"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-    <Button
-        android:onClick="startCalibration"
-        android:text="Start Calibration"
+
+    <TextView
+        android:id="@+id/eddystoneTelemetry"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="80dp"/>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <Button
+            android:id="@+id/calibrationButton"
+            android:layout_gravity="center"
+            android:layout_width="300dp"
+            android:onClick="startCalibration"
+            android:text="Start Calibration"
+            android:background="#8899CC"
+            android:layout_height="40dp"/>
+        <ProgressBar
+            android:indeterminate="true"
+            android:layout_width="wrap_content"
+            android:id="@+id/progressBar"
+            android:layout_marginTop="2dp"
+            android:layout_gravity="left|center_vertical"
+            android:layout_height="35dp"
+            android:layout_alignLeft="@+id/calibrationButton"
+            android:layout_alignTop="@+id/calibrationButton"
+            android:layout_alignEnd="@+id/calibrationButton" />
+    </RelativeLayout>
+
     <Button
+        android:id="@+id/ningoDataButton"
+        android:layout_marginTop="10dp"
         android:onClick="showData"
-        android:text="Show Metadata"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:text="Lookup Ningo Metadata"
+        android:layout_gravity="center"
+        android:layout_width="300dp"
+        android:background="#8899CC"
+        android:layout_height="40dp"/>
 
 </LinearLayout>

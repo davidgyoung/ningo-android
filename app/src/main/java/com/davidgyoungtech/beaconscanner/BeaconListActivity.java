@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
@@ -46,6 +47,8 @@ public class BeaconListActivity extends Activity implements AdapterView.OnItemCl
         mBeaconTracker = BeaconTracker.getInstance(this);
         mListView.setOnItemClickListener(this);
         mTextView.setText("Looking for beacons...");
+        findViewById(R.id.scanTab).setBackgroundColor(Color.parseColor("#aaccee"));
+
     }
     @Override
     protected void onResume() {
@@ -95,7 +98,10 @@ public class BeaconListActivity extends Activity implements AdapterView.OnItemCl
         int top = (v == null) ? 0 : v.getTop();
 
         if (list.size() == 0) {
-            mTextView.setText("No beacons detected.");
+            mTextView.setText("No beacons detected");
+        }
+        else if (list.size() == 1) {
+            mTextView.setText("One beacon detected:");
         }
         else {
             mTextView.setText(""+list.size()+" beacons detected:");
@@ -131,4 +137,18 @@ public class BeaconListActivity extends Activity implements AdapterView.OnItemCl
         }
 
     }
+
+    public void exit(View view) {
+        mBeaconTracker.stop();
+        this.finishAffinity();
+    }
+
+    public void transmitTabClicked(View view) {
+        Intent intent = new Intent(this, TransmitterListActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
+    public void scanTabClicked(View view) {
+    }
+
 }

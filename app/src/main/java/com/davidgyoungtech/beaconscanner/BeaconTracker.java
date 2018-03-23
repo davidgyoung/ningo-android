@@ -74,6 +74,7 @@ public class BeaconTracker {
     private BeaconTracker(Context context) {
         mContext = context;
         mBeaconManager = BeaconManagerV3.getInstance(mContext);
+        Beacon.setHardwareEqualityEnforced(true);
     }
 
 
@@ -90,6 +91,9 @@ public class BeaconTracker {
 
     public void updateTrackedBeacons(List<Beacon> beaconsDetected) {
         Date now = new Date();
+        for (TrackedBeacon trackedBeacon: getTrackedBeacons()) {
+            trackedBeacon.setTotalRangePeriods(trackedBeacon.getTotalRangePeriods()+1);
+        }
         for (Beacon beacon: beaconsDetected) {
             String key = beacon.toString();
             TrackedBeacon trackedBeacon = mTrackedBeacons.get(beacon.toString());
@@ -106,16 +110,18 @@ public class BeaconTracker {
             trackedBeacon.setTotalRangeSamples(trackedBeacon.getTotalRangeSamples()+1);
             if (trackedBeacon.getLastMeasurementCount() > beacon.getMeasurementCount()) {
                 if (!trackedBeacon.isMeasurementsStabilized()) {
-                    Log.d(TAG, "Measusrements stabilized because last count was "+trackedBeacon.getLastMeasurementCount()+" and new count is "+beacon.getMeasurementCount());
+                    Log.d(TAG, "Measurements stabilized because last count was "+trackedBeacon.getLastMeasurementCount()+" and new count is "+beacon.getMeasurementCount());
                     trackedBeacon.setMeasurementsStabilized(true);
                 }
             }
             trackedBeacon.setLastMeasurementCount(beacon.getMeasurementCount());
 
-            if (trackedBeacon.getTotalPacketsDetected() != 0 && trackedBeacon.getTotalRangeSamples() != 0) {
+            if (trackedBeacon.getTotalPacketsDetected() != 0 && trackedBeacon.getTotalRangePeriods() != 0) {
                 BeaconManager beaconManagerV2 = BeaconManager.getInstanceForApplication(mContext);
                 long rangePeriodMillis = beaconManagerV2.getForegroundScanPeriod();
-                trackedBeacon.setPacketsPerSec(trackedBeacon.getTotalPacketsDetected()*1.0/trackedBeacon.getTotalRangeSamples()*1000/rangePeriodMillis);
+                if (rangePeriodMillis != 0) {
+                    trackedBeacon.setPacketsPerSec(trackedBeacon.getTotalPacketsDetected()*1.0/trackedBeacon.getTotalRangePeriods()*1000/rangePeriodMillis);
+                }
             }
         }
 

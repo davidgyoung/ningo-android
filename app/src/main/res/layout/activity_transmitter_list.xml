@@ -10,7 +10,7 @@
     android:paddingRight="0dp"
     android:paddingTop="0dp"
     android:orientation="vertical"
-    tools:context=".BeaconListActivity">
+    tools:context=".TransmitterListActivity">
     <LinearLayout
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
@@ -18,6 +18,7 @@
         android:paddingBottom="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="0"
         android:background="#aaccee"
         android:orientation="horizontal">
         <TextView
@@ -27,15 +28,15 @@
             android:textStyle="bold"
             android:textSize="20dp"
             android:layout_gravity="center_vertical"
-            android:text="No beacons detected"
+            android:text="Configured Transmitters"
             android:layout_height="wrap_content"/>
         <Button
-            android:text="Exit"
+            android:text="New"
             android:background="#88aacc"
             android:layout_weight="0"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
-            android:onClick="exit"
+            android:onClick="newTransmitterTapped"
             android:layout_gravity="right"
             />
 

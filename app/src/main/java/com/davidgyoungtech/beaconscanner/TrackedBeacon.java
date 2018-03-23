@@ -15,6 +15,7 @@ public class TrackedBeacon {
     private double mPacketsPerSec;
     private int mTotalPacketsDetected;
     private int mTotalRangeSamples;
+    private int mTotalRangePeriods;
     private int mLastMeasurementCount = -1;
     private boolean mMeasurementsStabilized;
     private Date mLastSeenTime;
@@ -58,8 +59,15 @@ public class TrackedBeacon {
         return mTotalRangeSamples;
     }
 
+    public int getTotalRangePeriods() {
+        return mTotalRangePeriods;
+    }
+
     public void setTotalRangeSamples(int totalRangeSamples) {
         mTotalRangeSamples = totalRangeSamples;
+    }
+    public void setTotalRangePeriods(int totalRangePeriods) {
+        mTotalRangePeriods = totalRangePeriods;
     }
 
     public int getLastMeasurementCount() {

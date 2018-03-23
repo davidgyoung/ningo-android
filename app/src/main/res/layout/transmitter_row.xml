@@ -6,17 +6,39 @@
     android:paddingRight="16dp"
     android:paddingTop="4dp"
     android:paddingBottom="4dp"
+    android:layout_weight="2"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="80dp"
     android:orientation="horizontal">
-
-    <ImageView
-        android:id="@+id/icon"
-        android:layout_width="35dp"
-        android:layout_height="match_parent"
+    <LinearLayout
+        android:id="@+id/transmitterIconArea"
+        android:paddingLeft="8dp"
+        android:paddingRight="0dp"
+        android:paddingTop="0dp"
+        android:paddingBottom="2dp"
         android:layout_gravity="center_vertical"
-        android:scaleType="fitCenter"
-        app:srcCompat="@mipmap/altbeacon" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center_vertical"
+            android:scaleType="fitCenter"
+            app:srcCompat="@mipmap/altbeacon" />
+        <Button
+            android:id="@+id/transmitterOnButton"
+            android:layout_width="35dp"
+            android:layout_height="15dp"
+            android:background="#ff0000"
+            android:textColor="#ffffff"
+            android:textSize="10dp"
+            android:text="off"
+            android:textAlignment="center"
+        />
+
+    </LinearLayout>
 
 
     <LinearLayout
@@ -24,6 +46,7 @@
         android:paddingRight="0dp"
         android:paddingTop="0dp"
         android:paddingBottom="0dp"
+        android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -32,21 +55,18 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:padding="0dp"
+            android:text="beacon name"
             android:textSize="16sp" />
         <TextView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/line2"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:text="1234567890"
             android:padding="0dp"
             android:textSize="16sp" />
         <TextView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/line3"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="0dp"
-            android:textSize="16sp" />
-        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/line4"
+            android:text="major 1 minor 2"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:padding="0dp"

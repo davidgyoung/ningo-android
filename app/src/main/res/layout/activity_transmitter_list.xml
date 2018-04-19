@@ -30,22 +30,13 @@
             android:layout_gravity="center_vertical"
             android:text="Configured Transmitters"
             android:layout_height="wrap_content"/>
-        <Button
-            android:text="New"
-            android:background="#88aacc"
-            android:layout_weight="0"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:onClick="newTransmitterTapped"
-            android:layout_gravity="right"
-            />
-
 
     </LinearLayout>
 
     <ListView
         android:id="@+id/list"
         android:layout_weight="2"
+        android:descendantFocusability="blocksDescendants"
         android:layout_height="match_parent"
         android:layout_width="match_parent">
     </ListView>

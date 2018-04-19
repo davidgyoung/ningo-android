@@ -29,17 +29,6 @@
             android:layout_gravity="center_vertical"
             android:text="No beacons detected"
             android:layout_height="wrap_content"/>
-        <Button
-            android:text="Exit"
-            android:background="#88aacc"
-            android:layout_weight="0"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:onClick="exit"
-            android:layout_gravity="right"
-            />
-
-
     </LinearLayout>
 
     <ListView

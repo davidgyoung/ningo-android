@@ -1,19 +1,27 @@
 package com.davidgyoungtech.beaconscanner;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
 import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.BeaconManagerV3;
@@ -49,7 +57,19 @@ public class BeaconListActivity extends Activity implements AdapterView.OnItemCl
         mTextView.setText("Looking for beacons...");
         findViewById(R.id.scanTab).setBackgroundColor(Color.parseColor("#aaccee"));
 
+
     }
+    @TargetApi(23)
+    public static void setOverflowButtonColor(final Toolbar toolbar, final int color) {
+
+        Drawable drawable = toolbar.getOverflowIcon();
+        if(drawable != null) {
+            drawable = DrawableCompat.wrap(drawable);
+            DrawableCompat.setTint(drawable.mutate(), color);
+            toolbar.setOverflowIcon(drawable);
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -137,12 +157,7 @@ public class BeaconListActivity extends Activity implements AdapterView.OnItemCl
         }
 
     }
-
-    public void exit(View view) {
-        mBeaconTracker.stop();
-        this.finishAffinity();
-    }
-
+    
     public void transmitTabClicked(View view) {
         Intent intent = new Intent(this, TransmitterListActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -150,5 +165,19 @@ public class BeaconListActivity extends Activity implements AdapterView.OnItemCl
     }
     public void scanTabClicked(View view) {
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.exit, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    // handle button activities
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        this.finishAffinity();
+        return super.onOptionsItemSelected(item);
+    }
+
 
 }

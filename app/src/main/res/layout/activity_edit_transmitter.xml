@@ -1,41 +1,160 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:id="@+id/activity_ningo_login"
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:orientation="vertical"
-    tools:context=".EditTransmitterActivity">
-        <Spinner
-            android:id="@+id/beaconType"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1200sp"
+        android:orientation="vertical"
+        tools:context=".EditTransmitterActivity">
+        <TextView
+            android:layout_marginTop="10dp"
+            android:text="name"
+            android:textSize="12sp"
+            android:gravity="start"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"/>
 
-        </Spinner>
+        <EditText
+            android:id="@+id/name"
+            android:textSize="14sp"
+            android:hint="my cool beacon"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"/>
+
+        <TextView
+            android:layout_marginTop="10dp"
+            android:text="beacon type"
+            android:textSize="12sp"
+            android:gravity="start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <Spinner
+            android:id="@+id/beacon_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/identifier1_label"
+            android:layout_marginTop="10dp"
+            android:text="identifier 1"
+            android:textSize="12sp"
+            android:gravity="start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
         <EditText
             android:id="@+id/identifier1"
-            android:hint="id1"
+            android:textSize="14sp"
+            android:hint="2F234454-CF6D-4A0F-ADF2-F4911BA9FFA6"
             android:layout_width="match_parent"
-            android:layout_height="70dp"/>
-    <EditText
-        android:id="@+id/identifier2"
-        android:hint="id2"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"/>
-    <EditText
-        android:id="@+id/identifier3"
-        android:hint="id3"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"/>
+            android:layout_height="30dp"/>
+
+        <TextView
+            android:id="@+id/identifier2_label"
+            android:layout_marginTop="10dp"
+            android:text="identifier 2"
+            android:textSize="12sp"
+            android:gravity="start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/identifier2"
+            android:hint="1"
+            android:textSize="14sp"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"/>
+
+        <TextView
+            android:id="@+id/identifier3_label"
+            android:layout_marginTop="10dp"
+            android:text="identifier 3"
+            android:textSize="12sp"
+            android:gravity="start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/identifier3"
+            android:hint="1"
+            android:textSize="14sp"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"/>
+
+        <TextView
+            android:layout_marginTop="10dp"
+            android:id="@+id/data1_label"
+            android:text="data 1"
+            android:textSize="12sp"
+            android:gravity="start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/data1"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:hint="0"
+            android:inputType="number"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_marginTop="10dp"
+            android:text="transmitter power"
+            android:textSize="12sp"
+            android:gravity="start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <Spinner
+            android:id="@+id/transmitter_power"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_marginTop="10dp"
+            android:text="measured power"
+            android:textSize="12sp"
+            android:gravity="start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/measured_power"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:hint="-59"
+            android:inputType="numberSigned"
+            android:textSize="14sp" />
+
+
+        <TextView
+            android:layout_marginTop="10dp"
+            android:text="advertising rate"
+            android:textSize="12sp"
+            android:gravity="start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <Spinner
+            android:id="@+id/advertising_rate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <Button
             android:id="@+id/save_button"
+            android:layout_marginBottom="30sp"
             android:text="Save Changes"
             android:onClick="saveChanges"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>

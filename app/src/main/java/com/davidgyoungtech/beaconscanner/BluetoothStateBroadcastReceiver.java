@@ -22,7 +22,7 @@ public class BluetoothStateBroadcastReceiver extends BroadcastReceiver {
             final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
 
             if (state == BluetoothAdapter.STATE_OFF) {
-                mTransmitterManager.markAllOff(context);
+                mTransmitterManager.markAllOff(context, false);
                 Intent intent2 = new Intent("BluetoothOff");
                 LocalBroadcastManager.getInstance(context).sendBroadcast(intent2);
 

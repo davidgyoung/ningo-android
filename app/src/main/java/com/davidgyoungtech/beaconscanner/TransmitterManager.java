@@ -42,6 +42,12 @@ public class TransmitterManager {
         }
     }
 
+    public void refresh(Context context) {
+        markAllOff(context, false);
+        mTransmitters = BeaconTransmitter.loadAll(context);
+        ensureAllOn(context);
+    }
+
     public List<BeaconTransmitter> getTransmitters() {
         return mTransmitters;
     }
@@ -54,7 +60,7 @@ public class TransmitterManager {
     }
 
     public void ensureAllOn(Context context) {
-        boolean bluetoothOn = BluetoothAdapter.getDefaultAdapter().isEnabled();
+        boolean bluetoothOn = BluetoothAdapter.getDefaultAdapter() != null && BluetoothAdapter.getDefaultAdapter().isEnabled();
         if (!bluetoothOn) {
             return;
         }
@@ -66,9 +72,9 @@ public class TransmitterManager {
         BeaconTransmitter.saveAll(context, mTransmitters);
     }
 
-    public void markAllOff(Context context) {
+    public void markAllOff(Context context, boolean saveState) {
         for (BeaconTransmitter transmitter: mTransmitters) {
-            stopTransmitter(context, transmitter);
+            stopTransmitter(context, transmitter, saveState);
         }
     }
 
@@ -81,7 +87,7 @@ public class TransmitterManager {
             layout = BeaconParser.ALTBEACON_LAYOUT;
         }
         else if (transmitter.getFormat().equalsIgnoreCase("eddystone-uid")) {
-            layout = BeaconParser.EDDYSTONE_UID_LAYOUT;
+            layout = "s:0-1=feaa,m:2-2=00,p:3-3:-41,i:4-13,i:14-19,d:20-21";
         }
         else if (transmitter.getFormat().equalsIgnoreCase("eddystone-eid")) {
             layout = "s:0-1=feaa,m:2-2=30,p:3-3:-41,i:4-11";
@@ -140,6 +146,15 @@ public class TransmitterManager {
                 builder.setId1("0x"+transmitter.getId1());
                 Log.d(TAG, "identifier 2: "+transmitter.getId2());
                 builder.setId2("0x"+transmitter.getId2());
+                try {
+                    builder.setDataFields(
+                            Arrays.asList(
+                                    new Long[] { Long.parseLong(transmitter.getData1()) }
+                            ));
+                }
+                catch (NumberFormatException e) {
+                    Log.e(TAG, "cannot parse data field value for eddyston-uid transmitter: "+transmitter.getData1());
+                }
             }
             else if (transmitter.getFormat().equalsIgnoreCase("eddystone-eid")) {
                 builder.setId1("0x"+transmitter.getId1());
@@ -157,7 +172,6 @@ public class TransmitterManager {
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                 }
-                // TODO: try to make this work
             }
             else if (transmitter.getFormat().equalsIgnoreCase("eddystone-tlm")) {
                 // TODO: try to make this work
@@ -168,8 +182,9 @@ public class TransmitterManager {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 boolean bluetoothOn = BluetoothAdapter.getDefaultAdapter().isEnabled();
                 if (bluetoothOn) {
-                    Log.d(TAG, "Starting transmission");
-                    physicalTransmitter.startAdvertising(builder.build(), new AdvertiseCallback() {
+                    Beacon beacon = builder.build();
+                    Log.d(TAG, "Starting transmission for "+beacon);
+                    physicalTransmitter.startAdvertising(beacon, new AdvertiseCallback() {
                         @Override
                         public void onStartSuccess(AdvertiseSettings settingsInEffect) {
                             super.onStartSuccess(settingsInEffect);
@@ -237,7 +252,7 @@ public class TransmitterManager {
         BeaconTransmitter.saveAll(context, mTransmitters);
     }
 
-    public void stopTransmitter(final Context context, final BeaconTransmitter transmitter) {
+    public void stopTransmitter(final Context context, final BeaconTransmitter transmitter, boolean saveState) {
         org.altbeacon.beacon.BeaconTransmitter physicalTransmitter = mPhysicalTransmittersMap.get(transmitter.getUuid());
         if (physicalTransmitter == null) {
             return;
@@ -252,7 +267,9 @@ public class TransmitterManager {
         }
         mTransmittersStarted = newTransmittersStarted;
         transmitter.setTransmitting(false);
-        BeaconTransmitter.saveAll(context, mTransmitters);
+        if (saveState) {
+            BeaconTransmitter.saveAll(context, mTransmitters);
+        }
     }
 
 }

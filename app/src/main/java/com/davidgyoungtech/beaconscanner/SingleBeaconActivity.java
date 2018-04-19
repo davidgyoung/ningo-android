@@ -18,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.altbeacon.beacon.Beacon;
+import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.BeaconManagerV3;
 import org.altbeacon.beacon.Region;
 import org.altbeacon.beacon.utils.EddystoneTelemetryAccessor;
@@ -175,7 +176,7 @@ public class SingleBeaconActivity extends Activity {
                     detectionRate = "100";
                 }
                 else {
-                    detectionRate = String.format("%.0f",mTrackedBeacon.getTotalRangeSamples()*100.0/mTrackedBeacon.getTotalRangePeriods()+0.5);
+                    detectionRate = String.format("%.0f",mTrackedBeacon.getTotalRangeSamples()*100.0/mTrackedBeacon.getTotalRangePeriods());
                 }
             }
             StringBuilder sb = new StringBuilder();
@@ -192,6 +193,12 @@ public class SingleBeaconActivity extends Activity {
             sb.append("detection rate: "+detectionRate+"%");
             sb.append("\n");
             sb.append("stabilized: "+mTrackedBeacon.isMeasurementsStabilized());
+            sb.append("\n");
+
+            BeaconManager beaconManager = BeaconManager.getInstanceForApplication(this);
+
+            long rangePeriodMillis = beaconManager.getForegroundScanPeriod()+beaconManager.getForegroundBetweenScanPeriod();
+            sb.append("sample period: "+String.format("%.1f secs", mTrackedBeacon.getTotalRangePeriods()*rangePeriodMillis/1000.0));
             sb.append("\n");
             org.altbeacon.ningo.Beacon ningoBeacon = NingoDataFetcher.getInstance(this)
                     .getNingoBeaconForBeacon(trackedBeacon.getBeacon());

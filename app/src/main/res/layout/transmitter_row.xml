@@ -28,6 +28,8 @@
             android:scaleType="fitCenter"
             app:srcCompat="@mipmap/altbeacon" />
         <Button
+            android:focusable="false"
+            android:clickable="false"
             android:id="@+id/transmitterOnButton"
             android:layout_width="35dp"
             android:layout_height="15dp"

@@ -76,7 +76,7 @@ public class TransmitterArrayAdapter extends ArrayAdapter<BeaconTransmitter> {
             public void onClick(View view) {
                 if (transmitter.isEnabled()) {
                     transmitter.setEnabled(false);
-                    mActivity.getTransmitterManager().stopTransmitter(mActivity, transmitter);
+                    mActivity.getTransmitterManager().stopTransmitter(mActivity, transmitter, true);
                     mActivity.getTransmitterManager().ensureAllOn(mActivity);
                 }
                 else {

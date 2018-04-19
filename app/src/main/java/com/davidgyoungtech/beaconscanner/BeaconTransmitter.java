@@ -19,7 +19,7 @@ import java.util.UUID;
  */
 
 public class BeaconTransmitter implements Serializable {
-    private static final long serialVersionUID = 3L;
+    private static final long serialVersionUID = 4L;
     private String mName;
     private String mDescription;
     private String mFormat;
@@ -37,7 +37,7 @@ public class BeaconTransmitter implements Serializable {
 
     private static final String TAG = BeaconTransmitter.class.getSimpleName();
     private static final String SERIALIZATION_FILENAME = "beacon_transmitters.ser";
-    private static BeaconTransmitter createTransmitter() {
+    public static BeaconTransmitter createTransmitter() {
         BeaconTransmitter tx = new BeaconTransmitter();
         return tx;
     }

@@ -24,7 +24,7 @@ public class BluetoothHelper {
 
                 @Override
                 public void onDismiss(DialogInterface dialog) {
-                    System.exit(0);
+                    //System.exit(0);
                 }
 
             });

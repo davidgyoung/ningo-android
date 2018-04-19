@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -62,6 +64,7 @@ public class TransmitterListActivity extends Activity implements AdapterView.OnI
     @Override
     protected void onResume() {
         super.onResume();
+        mTransmitterManager.refresh(this);
         updateListView();
     }
 
@@ -148,8 +151,20 @@ public class TransmitterListActivity extends Activity implements AdapterView.OnI
         }
     };
 
-    public void newTransmitterTapped(View view) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.add, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    // handle button activities
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
         Intent intent = new Intent(this, EditTransmitterActivity.class);
         startActivity(intent);
+
+        return super.onOptionsItemSelected(item);
     }
 }

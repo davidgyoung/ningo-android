@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item tools:ignore="AppCompatResource"
+        android:id="@+id/mybutton"
+        android:icon="@mipmap/ic_action_exit"
+        android:title="Exit"
+        android:showAsAction="always"
+        />
+</menu>

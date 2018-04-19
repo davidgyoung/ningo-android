@@ -64,6 +64,7 @@ public class BeaconTracker {
             trackedBeacon.setMeasurementsStabilized(false);
             trackedBeacon.setLastMeasurementCount(0);
             trackedBeacon.setTotalPacketsDetected(0);
+            trackedBeacon.setTotalRangePeriods(0);
             trackedBeacon.setTotalRangeSamples(0);
         }
     }
@@ -118,7 +119,7 @@ public class BeaconTracker {
 
             if (trackedBeacon.getTotalPacketsDetected() != 0 && trackedBeacon.getTotalRangePeriods() != 0) {
                 BeaconManager beaconManagerV2 = BeaconManager.getInstanceForApplication(mContext);
-                long rangePeriodMillis = beaconManagerV2.getForegroundScanPeriod();
+                long rangePeriodMillis = beaconManagerV2.getForegroundScanPeriod()+beaconManagerV2.getForegroundBetweenScanPeriod();
                 if (rangePeriodMillis != 0) {
                     trackedBeacon.setPacketsPerSec(trackedBeacon.getTotalPacketsDetected()*1.0/trackedBeacon.getTotalRangePeriods()*1000/rangePeriodMillis);
                 }

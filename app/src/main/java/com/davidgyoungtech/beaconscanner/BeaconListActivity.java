@@ -157,7 +157,7 @@ public class BeaconListActivity extends Activity implements AdapterView.OnItemCl
         }
 
     }
-    
+
     public void transmitTabClicked(View view) {
         Intent intent = new Intent(this, TransmitterListActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT | Intent.FLAG_ACTIVITY_CLEAR_TOP);

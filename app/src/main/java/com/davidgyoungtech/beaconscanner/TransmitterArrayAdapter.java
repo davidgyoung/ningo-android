@@ -4,12 +4,8 @@ package com.davidgyoungtech.beaconscanner;
  * Created by dyoung on 3/2/18.
  */
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.text.Layout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +14,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -76,13 +71,14 @@ public class TransmitterArrayAdapter extends ArrayAdapter<BeaconTransmitter> {
             public void onClick(View view) {
                 if (transmitter.isEnabled()) {
                     transmitter.setEnabled(false);
+                    transmitter.setLastTransmitStartTime(0);
                     mActivity.getTransmitterManager().stopTransmitter(mActivity, transmitter, true);
                     mActivity.getTransmitterManager().ensureAllOn(mActivity);
                 }
                 else {
                     mActivity.getTransmitterManager().startTransmitter(mActivity, transmitter);
                 }
-                updateEnabledIcon(view, transmitter.isEnabled(), transmitter.isTransmitting());
+                updateEnabledIcon(view, transmitter.isEnabled(), transmitter.getTransmitting());
 
             }
         };
@@ -121,7 +117,7 @@ public class TransmitterArrayAdapter extends ArrayAdapter<BeaconTransmitter> {
             line3.setText("");
             image.setImageResource(R.mipmap.ic_launcher);
         }
-        updateEnabledIcon(view, transmitter.isEnabled(), transmitter.isTransmitting());
+        updateEnabledIcon(view, transmitter.isEnabled(), transmitter.getTransmitting());
 
 
         return view;

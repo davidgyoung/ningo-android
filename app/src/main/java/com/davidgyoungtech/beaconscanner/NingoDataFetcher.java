@@ -48,7 +48,7 @@ public class NingoDataFetcher {
             Log.d(TAG, "It is try to retry fetching ningo data");
             fetch();
         }
-        if (now-mLastRefreshTime > REFRESH_INTERVAL_MILLIS) {
+        if (now-mLastRefreshTime > REFRESH_INTERVAL_MILLIS && now-mLastFailedRefreshTime > RETRY_INTERVAL_MILLIS) {
             Log.d(TAG, "It is time to fetch ningo data.");
             fetch();
         }

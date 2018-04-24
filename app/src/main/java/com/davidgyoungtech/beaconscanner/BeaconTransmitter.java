@@ -6,7 +6,6 @@ import android.util.Log;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -19,7 +18,7 @@ import java.util.UUID;
  */
 
 public class BeaconTransmitter implements Serializable {
-    private static final long serialVersionUID = 4L;
+    private static final long serialVersionUID = 5L;
     private String mName;
     private String mDescription;
     private String mFormat;
@@ -33,6 +32,7 @@ public class BeaconTransmitter implements Serializable {
     private boolean mEnabled = false;
     private boolean mTransmitting = false;
     private String mUuid = UUID.randomUUID().toString();
+    private long mTransmitStartTime = 0l;
 
 
     private static final String TAG = BeaconTransmitter.class.getSimpleName();
@@ -49,12 +49,13 @@ public class BeaconTransmitter implements Serializable {
         try {
             Log.d(TAG, "saving transmitters");
             for (BeaconTransmitter transmitter : transmitters) {
-                Log.d(TAG, transmitter.getUuid()+" / "+transmitter.hashCode()+" enabled: "+transmitter.isEnabled()+" transmitting: "+transmitter.isTransmitting());
+                Log.d(TAG, transmitter.getUuid()+" / "+transmitter.hashCode()+" enabled: "+transmitter.isEnabled()+" transmitting: "+transmitter.getTransmitting());
             }
 
             logCounts(transmitters);
             FileOutputStream fileOutputStream = context.openFileOutput(SERIALIZATION_FILENAME, Context.MODE_PRIVATE);
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(serialVersionUID);
             objectOutputStream.writeObject(transmitters);
             objectOutputStream.close();
             fileOutputStream.close();
@@ -69,6 +70,10 @@ public class BeaconTransmitter implements Serializable {
             Log.d(TAG, "****** loading transmitters");
             FileInputStream fileInputStream = context.openFileInput(SERIALIZATION_FILENAME);
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            Long savedSerialVersionUID  = (Long) objectInputStream.readObject();
+            if (serialVersionUID != savedSerialVersionUID) {
+                throw new IOException("Bad saved serialVersionUID: "+savedSerialVersionUID+" vs. expected "+serialVersionUID);
+            }
             List<BeaconTransmitter> transmitters = (List<BeaconTransmitter>) objectInputStream.readObject();
             objectInputStream.close();
             fileInputStream.close();
@@ -80,6 +85,9 @@ public class BeaconTransmitter implements Serializable {
         }
         catch (ClassNotFoundException e) {
             Log.d(TAG, "can't load transmitters", e);
+        }
+        catch (ClassCastException e) {
+            Log.d(TAG, "Wrong object");
         }
 
         // If we get to here we need to set up default data
@@ -111,6 +119,7 @@ public class BeaconTransmitter implements Serializable {
         transmitter3.setMeasuredPower(-59+41);
         transmitter3.setTransmitterPower("HIGH");
         transmitter3.setAdvertisingRate(10);
+        transmitter3.setData1("0");
         BeaconTransmitter transmitter4 = BeaconTransmitter.createTransmitter();
         transmitter4.setName("Eddystone-EID (static value) sample");
         transmitter4.setId1("0102030405060708");
@@ -223,13 +232,22 @@ public class BeaconTransmitter implements Serializable {
         mEnabled = enabled;
     }
 
-    public boolean isTransmitting() {
+    public long getLastTransmitStartTime() {
+        return mTransmitStartTime;
+    }
+
+    public void setLastTransmitStartTime(long transmitStartTime) {
+        mTransmitStartTime = transmitStartTime;
+    }
+
+    public boolean getTransmitting() {
         return mTransmitting;
     }
 
     public void setTransmitting(boolean transmitting) {
         mTransmitting = transmitting;
     }
+
     public String getUuid() {
         return mUuid;
     }
@@ -238,7 +256,7 @@ public class BeaconTransmitter implements Serializable {
         int transmitting = 0;
         int enabled = 0;
         for (BeaconTransmitter transmitter : transmitters) {
-            if (transmitter.isTransmitting()) {
+            if (transmitter.mTransmitting) {
                 transmitting++;
             }
             if (transmitter.isEnabled()) {

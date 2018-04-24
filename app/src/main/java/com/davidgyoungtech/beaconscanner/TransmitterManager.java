@@ -1,15 +1,11 @@
 package com.davidgyoungtech.beaconscanner;
 
-import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.le.AdvertiseCallback;
 import android.bluetooth.le.AdvertiseSettings;
-import android.bluetooth.le.PeriodicAdvertisingParameters;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -21,6 +17,8 @@ import org.altbeacon.beacon.utils.UrlBeaconUrlCompressor;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -43,7 +41,8 @@ public class TransmitterManager {
     }
 
     public void refresh(Context context) {
-        markAllOff(context, false);
+        Log.d(TAG, "refresh");
+        markAllOff(context, true);
         mTransmitters = BeaconTransmitter.loadAll(context);
         ensureAllOn(context);
     }
@@ -60,19 +59,52 @@ public class TransmitterManager {
     }
 
     public void ensureAllOn(Context context) {
+        Log.d(TAG, "Ensure all on");
         boolean bluetoothOn = BluetoothAdapter.getDefaultAdapter() != null && BluetoothAdapter.getDefaultAdapter().isEnabled();
         if (!bluetoothOn) {
             return;
         }
+        // We sort by the transmitter with the oldest nonzero start time, so if we stop and restart
+        // we repopulate the old slots in sthe same order as before
+        List<BeaconTransmitter> sortedTranmsmitters = new ArrayList<>();
         for (BeaconTransmitter transmitter : mTransmitters) {
-            if (transmitter.isEnabled() && !transmitter.isTransmitting()) {
+            sortedTranmsmitters.add(transmitter);
+        }
+        Collections.copy(sortedTranmsmitters, mTransmitters);
+        Collections.sort(sortedTranmsmitters, new Comparator<BeaconTransmitter>() {
+            @Override
+            public int compare(BeaconTransmitter t1, BeaconTransmitter t2) {
+                if (t1.getLastTransmitStartTime() == t2.getLastTransmitStartTime()) {
+                    return 0;
+                }
+                if (t2.getLastTransmitStartTime() == 0) {
+                    return -1;
+                }
+                if (t1.getLastTransmitStartTime() == 0) {
+                    return 1;
+                }
+                if (t1.getLastTransmitStartTime() > t2.getLastTransmitStartTime()) {
+                    return 1;
+                }
+                return -1;
+            }
+        });
+        Log.d(TAG, "transmitter count "+mTransmitters.size()+", sorted count: "+sortedTranmsmitters.size());
+
+        for (BeaconTransmitter transmitter : sortedTranmsmitters) {
+            if (transmitter.isEnabled() && !transmitter.getTransmitting()) {
+                Log.d(TAG, "Starting transmitter with last start time: "+transmitter.getLastTransmitStartTime());
                 startTransmitter(context, transmitter);
+            }
+            else {
+                Log.d(TAG, "not starging because already transmitting is "+transmitter.getTransmitting()+" and enabled is "+transmitter.isEnabled());
             }
         }
         BeaconTransmitter.saveAll(context, mTransmitters);
     }
 
     public void markAllOff(Context context, boolean saveState) {
+        Log.d(TAG, "markAllOff");
         for (BeaconTransmitter transmitter: mTransmitters) {
             stopTransmitter(context, transmitter, saveState);
         }
@@ -188,6 +220,7 @@ public class TransmitterManager {
                         @Override
                         public void onStartSuccess(AdvertiseSettings settingsInEffect) {
                             super.onStartSuccess(settingsInEffect);
+                            transmitter.setLastTransmitStartTime(System.currentTimeMillis());
                             transmitter.setTransmitting(true);
                             Log.d(TAG, "transmit start success");
                             Intent intent = new Intent("AdvertisingStarted");
@@ -198,6 +231,7 @@ public class TransmitterManager {
                         @Override
                         public void onStartFailure(int errorCode) {
                             transmitter.setTransmitting(false);
+                            transmitter.setLastTransmitStartTime(0);
                             Intent intent = new Intent("AdvertisingFailed");
                             intent.putExtra("transmitter", transmitter);
                             Log.d(TAG, "transmit start failed "+errorCode);
@@ -224,7 +258,7 @@ public class TransmitterManager {
                 else {
                     Log.d(TAG, "Cannot start transmission.  BLE is turned off.");
 
-                    // This is thrown if blueooth is off
+                    // This is thrown if bluetooth is off
                     transmitter.setTransmitting(false);
                     Intent intent = new Intent("AdvertisingFailed");
                     intent.putExtra("transmitter", transmitter);
@@ -235,6 +269,7 @@ public class TransmitterManager {
             else {
                 Log.d(TAG, "No android 5.0 cannot transmit");
                 transmitter.setTransmitting(false);
+                transmitter.setLastTransmitStartTime(0l);
                 Intent intent = new Intent("AdvertisingFailed");
                 intent.putExtra("transmitter", transmitter);
                 intent.putExtra("reason", "Android 5.0+ is needed to transmit.");
@@ -246,7 +281,7 @@ public class TransmitterManager {
         }
         Log.d(TAG, "transmitter "+transmitter.getUuid()+" / "+transmitter.hashCode()+" should be enabled: "+transmitter.isEnabled());
         for (BeaconTransmitter tx : mTransmitters) {
-            Log.d(TAG, tx.getUuid()+" / "+tx.hashCode()+" is our transmitter ? "+transmitter.getUuid().equalsIgnoreCase(tx.getUuid()) +" enabled: "+tx.isEnabled()+" transmitting: "+tx.isTransmitting());
+            Log.d(TAG, tx.getUuid()+" / "+tx.hashCode()+" is our transmitter ? "+transmitter.getUuid().equalsIgnoreCase(tx.getUuid()) +" enabled: "+tx.isEnabled()+" transmitting: "+tx.getTransmitting() );
         }
         Log.d(TAG, "Calling saveAll");
         BeaconTransmitter.saveAll(context, mTransmitters);

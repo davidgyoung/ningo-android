@@ -42,8 +42,14 @@ public class TransmitterManager {
 
     public void refresh(Context context) {
         Log.d(TAG, "refresh");
-        markAllOff(context, true);
+        // We are marking all off here in case we have edited a transmitter.  This will stop the
+        // existing one with the current settings so we can start a new one.  We do not save
+        // the sate because this might blow over the newly changed transmitter before we load it
+        markAllOff(context, false);
         mTransmitters = BeaconTransmitter.loadAll(context);
+        // We mark all off again a second time, but this time we do save state, so the UI knows they
+        // are all off.  This is new new list of transmitters so it is safe to save
+        markAllOff(context, true);
         ensureAllOn(context);
     }
 

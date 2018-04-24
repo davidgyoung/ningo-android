@@ -56,7 +56,7 @@ public class TransmitterListActivity extends Activity implements AdapterView.OnI
         LocalBroadcastManager.getInstance(this).registerReceiver(mLocalBroadcastReceiver,
                 new IntentFilter("AdvertisingFailed"));
         LocalBroadcastManager.getInstance(this).registerReceiver(mLocalBroadcastReceiver,
-                new IntentFilter("BlutoothOff"));
+                new IntentFilter("BluetoothOff"));
 
         findViewById(R.id.transmitTab).setBackgroundColor(Color.parseColor("#aaccee"));
     }

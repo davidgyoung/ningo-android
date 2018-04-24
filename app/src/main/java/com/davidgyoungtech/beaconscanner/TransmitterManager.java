@@ -106,6 +106,7 @@ public class TransmitterManager {
     public void markAllOff(Context context, boolean saveState) {
         Log.d(TAG, "markAllOff");
         for (BeaconTransmitter transmitter: mTransmitters) {
+            Log.d(TAG, "Stopping: "+transmitter);
             stopTransmitter(context, transmitter, saveState);
         }
     }
@@ -248,7 +249,15 @@ public class TransmitterManager {
                                 intent.putExtra("reason", "This device does not support advertising.");
                             }
                             else if (errorCode == ADVERTISE_FAILED_TOO_MANY_ADVERTISERS) {
-                                intent.putExtra("reason", "No more advertising slots available on this device.");
+                                if (mTransmittersStarted.size() == 0){
+                                    intent.putExtra("reason", "No more advertising slots available on this device.  It may be that another app is running that is using all the bluetooth resources on this device.  Please try to stop any other bluetooth apps and try again.  If that does not help, there may be a problem with bluetooth on this device model.  Please report this to the manufacturer.");
+                                }
+                                else if (mTransmittersStarted.size() == 1){
+                                    intent.putExtra("reason", "No more advertising slots available on this device.  While many Android device models have chips that support multiple bluetooth advertisements, it looks like this one does not.");
+                                }
+                                else {
+                                    intent.putExtra("reason", "No more advertising slots available on this device.  This app has already started "+mTransmittersStarted.size()+" beacon advertisements.  You may have reached the limit of this device's bluetoth chip.");
+                                }
                             }
                             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                             BeaconTransmitter.saveAll(context, mTransmitters);
@@ -290,9 +299,12 @@ public class TransmitterManager {
     public void stopTransmitter(final Context context, final BeaconTransmitter transmitter, boolean saveState) {
         org.altbeacon.beacon.BeaconTransmitter physicalTransmitter = mPhysicalTransmittersMap.get(transmitter.getUuid());
         if (physicalTransmitter == null) {
-            return;
+            Log.d(TAG, "No physical transmitter.");
+
         }
-        physicalTransmitter.stopAdvertising();
+        else {
+            physicalTransmitter.stopAdvertising();
+        }
         mPhysicalTransmittersMap.remove(transmitter);
         List<BeaconTransmitter> newTransmittersStarted = new ArrayList<>();
         for (BeaconTransmitter tx: mTransmittersStarted) {
